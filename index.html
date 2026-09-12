@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+
+<title>Ultimate RGB Keyboard</title>
+
+<style>
+/* ================================
+   RESET
+================================ */
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  font-family:Arial,Helvetica,sans-serif;
+  background:
+    radial-gradient(circle at 50% 50%,#17202b 0%,#080b10 55%,#020305 100%);
+}
+
+/* ================================
+   ROTATE MESSAGE
+================================ */
+.rotate-message{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:#05070b;
+  color:white;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  text-align:center;
+  font-size:18px;
+}
+
+/* ================================
+   APP
+================================ */
+.app{
+  width:100vw;
+  height:100dvh;
+  padding:1.2vh 1vw;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* ================================
+   KEYBOARD CASE
+================================ */
+.keyboard-case{
+  position:relative;
+
+  width:100%;
+  height:100%;
+
+  padding:1.1vh .9vw;
+
+  border-radius:1.8vw;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.14),
+      rgba(255,255,255,.02) 20%,
+      rgba(0,0,0,.5) 55%,
+      rgba(255,255,255,.05)
+    );
+
+  border:1px solid rgba(255,255,255,.15);
+
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.2),
+    inset 0 -8px 20px rgba(0,0,0,.6),
+    0 0 20px rgba(0,180,255,.2),
+    0 0 50px rgba(150,0,255,.15);
+
+  overflow:hidden;
+}
+
+/* Animated RGB border */
+
+.keyboard-case::before{
+  content:"";
+
+  position:absolute;
+  inset:0;
+
+  padding:2px;
+
+  border-radius:inherit;
+
+  background:
+    linear-gradient(
+      90deg,
+      #ff004c,
+      #ff8a00,
+      #fff000,
+      #00ff88,
+      #00d9ff,
+      #675cff,
+      #d600ff,
+      #ff004c
+    );
+
+  background-size:300% 100%;
+
+  animation:borderRGB 7s linear infinite;
+
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+
+  -webkit-mask-composite:xor;
+
+  pointer-events:none;
+
+  opacity:.85;
+}
+
+@keyframes borderRGB{
+  from{background-position:0 0}
+  to{background-position:300% 0}
+}
+
+/* ================================
+   RGB UNDERGLOW
+================================ */
+
+.underglow{
+  position:absolute;
+
+  left:5%;
+  right:5%;
+  bottom:-20px;
+
+  height:35px;
+
+  filter:blur(18px);
+
+  background:
+    linear-gradient(
+      90deg,
+      #ff0055,
+      #ffcc00,
+      #00ff88,
+      #00ccff,
+      #8b5cff,
+      #ff00cc,
+      #ff0055
+    );
+
+  background-size:300% 100%;
+
+  animation:rgbMove 5s linear infinite;
+
+  opacity:.9;
+
+  pointer-events:none;
+}
+
+@keyframes rgbMove{
+  from{background-position:0%}
+  to{background-position:300%}
+}
+
+/* ================================
+   MAIN LAYOUT
+================================ */
+
+.keyboard-layout{
+
+  position:relative;
+  z-index:2;
+
+  width:100%;
+  height:100%;
+
+  display:grid;
+
+  grid-template-columns:
+    minmax(0,68fr)
+    minmax(0,11fr)
+    minmax(0,21fr);
+
+  gap:.55vw;
+}
+
+/* ================================
+   LEFT SECTION
+================================ */
+
+.left-section{
+
+  min-width:0;
+  min-height:0;
+
+  display:grid;
+
+  grid-template-rows:
+    repeat(6,minmax(0,1fr));
+
+  gap:.55vh;
+}
+
+.key-row{
+
+  min-width:0;
+  min-height:0;
+
+  display:flex;
+
+  gap:.35vw;
+}
+
+/* ================================
+   KEY STYLE
+================================ */
+
+.key{
+
+  position:relative;
+
+  flex:1;
+
+  min-width:0;
+  min-height:0;
+
+  border:none;
+
+  border-radius:.65vw;
+
+  color:#f5f7ff;
+
+  font-weight:700;
+
+  font-size:clamp(6px,1vw,15px);
+
+  background:
+
+    linear-gradient(
+      145deg,
+      rgba(70,78,90,.95),
+      rgba(26,29,35,.98) 40%,
+      rgba(13,15,19,.98)
+    );
+
+  box-shadow:
+
+    inset 0 1px 1px rgba(255,255,255,.14),
+
+    inset 0 -3px 4px rgba(0,0,0,.7),
+
+    0 2px 2px rgba(0,0,0,.7),
+
+    0 0 3px var(--rgb),
+
+    0 0 8px rgba(0,0,0,.5);
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  overflow:hidden;
+
+  cursor:pointer;
+
+  user-select:none;
+
+  touch-action:none;
+
+  transition:
+
+    transform .08s ease,
+
+    filter .1s ease,
+
+    box-shadow .1s ease;
+
+}
+
+/* RGB KEY EDGE */
+
+.key::before{
+
+  content:"";
+
+  position:absolute;
+
+  inset:0;
+
+  border-radius:inherit;
+
+  padding:1px;
+
+  background:var(--rgb);
+
+  opacity:.8;
+
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+
+  -webkit-mask-composite:xor;
+
+  pointer-events:none;
+
+}
+
+/* RGB WAVE */
+
+.key::after{
+
+  content:"";
+
+  position:absolute;
+
+  width:120%;
+
+  height:5px;
+
+  bottom:-2px;
+
+  background:var(--rgb);
+
+  filter:blur(5px);
+
+  opacity:.8;
+
+  pointer-events:none;
+
+}
+
+/* PRESS */
+
+.key.pressed{
+
+  transform:
+    translateY(2px)
+    scale(.96);
+
+  filter:brightness(1.6);
+
+  box-shadow:
+
+    inset 0 1px 8px rgba(255,255,255,.4),
+
+    0 0 12px var(--rgb),
+
+    0 0 25px var(--rgb);
+
+}
+
+/* ================================
+   KEY WIDTHS
+================================ */
+
+.w12{flex:1.2}
+.w15{flex:1.5}
+.w18{flex:1.8}
+.w20{flex:2}
+.w25{flex:2.5}
+.w30{flex:3}
+.w50{flex:5}
+
+/* ================================
+   MIDDLE SECTION
+================================ */
+
+.middle-section{
+
+  min-width:0;
+  min-height:0;
+
+  display:grid;
+
+  grid-template-rows:
+    2fr
+    .7fr
+    1.3fr
+    2fr;
+
+  gap:.55vh;
+}
+
+/* Navigation */
+
+.nav-grid{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  grid-template-rows:
+    repeat(2,minmax(0,1fr));
+
+  gap:.35vw;
+}
+
+/* Brand */
+
+.brand-area{
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  flex-direction:column;
+
+  min-width:0;
+
+  color:white;
+
+  text-align:center;
+
+  user-select:none;
+
+  opacity:.9;
+}
+
+.brand-name{
+
+  font-size:clamp(8px,1.2vw,18px);
+
+  font-weight:900;
+
+  font-style:italic;
+
+  letter-spacing:.15em;
+
+  background:
+    linear-gradient(
+      90deg,
+      #00e5ff,
+      #ffffff,
+      #9d5cff
+    );
+
+  -webkit-background-clip:text;
+
+  color:transparent;
+
+  text-shadow:0 0 10px rgba(0,220,255,.4);
+}
+
+.brand-sub{
+
+  margin-top:2px;
+
+  font-size:clamp(5px,.55vw,8px);
+
+  letter-spacing:.25em;
+
+  color:#8ea0b5;
+}
+
+/* Arrows */
+
+.arrow-grid{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
+  grid-template-rows:
+    repeat(2,minmax(0,1fr));
+
+  gap:.35vw;
+}
+
+.arrow-up{
+  grid-column:2;
+}
+
+.arrow-left{
+  grid-column:1;
+  grid-row:2;
+}
+
+.arrow-down{
+  grid-column:2;
+  grid-row:2;
+}
+
+.arrow-right{
+  grid-column:3;
+  grid-row:2;
+}
+
+/* ================================
+   RIGHT SECTION
+================================ */
+
+.right-section{
+
+  min-width:0;
+  min-height:0;
+
+  display:grid;
+
+  grid-template-rows:
+    .45fr
+    5fr;
+
+  gap:.55vh;
+}
+
+/* LED AREA */
+
+.led-panel{
+
+  border-radius:.8vw;
+
+  display:flex;
+
+  justify-content:center;
+
+  align-items:center;
+
+  gap:18%;
+
+  background:
+    linear-gradient(
+      145deg,
+      #252b33,
+      #0c0f14
+    );
+
+  box-shadow:
+    inset 0 1px rgba(255,255,255,.1);
+}
+
+.led-wrap{
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  flex-direction:column;
+
+  gap:3px;
+
+  font-size:clamp(4px,.55vw,8px);
+
+  color:#9ca8b7;
+}
+
+.led{
+
+  width:clamp(6px,.65vw,11px);
+
+  aspect-ratio:1;
+
+  border-radius:50%;
+
+  background:#182029;
+
+  box-shadow:
+    inset 0 0 4px black;
+}
+
+.led.on{
+
+  background:#00ff9d;
+
+  box-shadow:
+    0 0 8px #00ff9d,
+    0 0 15px #00ff9d;
+}
+
+/* ================================
+   NUMPAD
+================================ */
+
+.numpad{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+
+  grid-template-rows:
+    repeat(5,minmax(0,1fr));
+
+  gap:.35vw;
+}
+
+.plus{
+  grid-column:4;
+  grid-row:2 / span 2;
+}
+
+.num-enter{
+  grid-column:4;
+  grid-row:4 / span 2;
+}
+
+.num-zero{
+  grid-column:1 / span 2;
+}
+
+/* ================================
+   RIPPLE
+================================ */
+
+.ripple{
+
+  position:absolute;
+
+  border-radius:50%;
+
+  transform:scale(0);
+
+  background:white;
+
+  opacity:.55;
+
+  pointer-events:none;
+
+  animation:ripple .45s ease-out;
+}
+
+@keyframes ripple{
+
+  to{
+
+    transform:scale(4);
+
+    opacity:0;
+
+  }
+}
+
+/* ================================
+   TOP RGB WAVE
+================================ */
+
+.rgb-wave{
+
+  position:absolute;
+
+  top:0;
+
+  left:0;
+
+  width:200%;
+
+  height:3px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #ff0055,
+      #ff9900,
+      #ffff00,
+      #00ff88,
+      #00ddff,
+      #6b5cff,
+      #d000ff,
+      #ff0055
+    );
+
+  animation:wave 5s linear infinite;
+
+  box-shadow:
+    0 0 8px #00eaff,
+    0 0 15px #7b3cff;
+
+}
+
+@keyframes wave{
+
+  from{
+    transform:translateX(-50%);
+  }
+
+  to{
+    transform:translateX(0%);
+  }
+
+}
+
+/* ================================
+   MOBILE
+================================ */
+
+@media(max-height:500px){
+
+  .app{
+    padding:.7vh .5vw;
+  }
+
+  .keyboard-case{
+    padding:.8vh .6vw;
+  }
+
+  .keyboard-layout{
+    gap:.35vw;
+  }
+
+  .left-section,
+  .middle-section,
+  .right-section{
+    gap:.35vh;
+  }
+
+  .key-row,
+  .nav-grid,
+  .arrow-grid,
+  .numpad{
+    gap:.25vw;
+  }
+
+  .key{
+    border-radius:.45vw;
+  }
+
+}
+
+/* Portrait only */
+
+@media(orientation:portrait){
+
+  .app{
+    display:none;
+  }
+
+  .rotate-message{
+    display:flex;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="rotate-message">
+  <div style="font-size:50px">📱↔️</div>
+  <br>
+  Rotate your phone to landscape
+  <br><br>
+  <small>RGB Keyboard works in landscape</small>
+</div>
+
+
+<div class="app">
+
+<div class="keyboard-case">
+
+<div class="rgb-wave"></div>
+
+<div class="keyboard-layout">
+
+
+<!-- =====================
+LEFT KEYBOARD
+===================== -->
+
+<div class="left-section">
+
+
+<div class="key-row">
+
+<button class="key w12">ESC</button>
+
+<button class="key">F1</button>
+<button class="key">F2</button>
+<button class="key">F3</button>
+<button class="key">F4</button>
+
+<button class="key">F5</button>
+<button class="key">F6</button>
+<button class="key">F7</button>
+<button class="key">F8</button>
+
+<button class="key">F9</button>
+<button class="key">F10</button>
+<button class="key">F11</button>
+<button class="key">F12</button>
+
+</div>
+
+
+<div class="key-row">
+
+<button class="key">`</button>
+
+<button class="key">1</button>
+<button class="key">2</button>
+<button class="key">3</button>
+<button class="key">4</button>
+<button class="key">5</button>
+<button class="key">6</button>
+<button class="key">7</button>
+<button class="key">8</button>
+<button class="key">9</button>
+<button class="key">0</button>
+
+<button class="key">-</button>
+<button class="key">=</button>
+
+<button class="key w25">BACK</button>
+
+</div>
+
+
+<div class="key-row">
+
+<button class="key w18">TAB</button>
+
+<button class="key">Q</button>
+<button class="key">W</button>
+<button class="key">E</button>
+<button class="key">R</button>
+<button class="key">T</button>
+<button class="key">Y</button>
+<button class="key">U</button>
+<button class="key">I</button>
+<button class="key">O</button>
+<button class="key">P</button>
+
+<button class="key">[</button>
+<button class="key">]</button>
+<button class="key">\</button>
+
+</div>
+
+
+<div class="key-row">
+
+<button class="key w20" id="capsKey">
+CAPS
+</button>
+
+<button class="key">A</button>
+<button class="key">S</button>
+<button class="key">D</button>
+<button class="key">F</button>
+<button class="key">G</button>
+<button class="key">H</button>
+<button class="key">J</button>
+<button class="key">K</button>
+<button class="key">L</button>
+
+<button class="key">;</button>
+<button class="key">'</button>
+
+<button class="key w25">ENTER</button>
+
+</div>
+
+
+<div class="key-row">
+
+<button class="key w30">
+SHIFT
+</button>
+
+<button class="key">Z</button>
+<button class="key">X</button>
+<button class="key">C</button>
+<button class="key">V</button>
+<button class="key">B</button>
+<button class="key">N</button>
+<button class="key">M</button>
+
+<button class="key">,</button>
+<button class="key">.</button>
+<button class="key">/</button>
+
+<button class="key w30">
+SHIFT
+</button>
+
+</div>
+
+
+<div class="key-row">
+
+<button class="key w15">
+CTRL
+</button>
+
+<button class="key">
+FN
+</button>
+
+<button class="key">
+WIN
+</button>
+
+<button class="key">
+ALT
+</button>
+
+<button class="key w50">
+SPACE
+</button>
+
+<button class="key">
+ALT
+</button>
+
+<button class="key w15">
+CTRL
+</button>
+
+</div>
+
+
+</div>
+
+
+<!-- =====================
+MIDDLE SECTION
+===================== -->
+
+<div class="middle-section">
+
+
+<div class="nav-grid">
+
+<button class="key">INS</button>
+<button class="key">HOME</button>
+<button class="key">PG UP</button>
+
+<button class="key">DEL</button>
+<button class="key">END</button>
+<button class="key">PG DN</button>
+
+</div>
+
+
+<div></div>
+
+
+<div class="brand-area">
+
+<div class="brand-name">
+⚡ GERMARK
+</div>
+
+<div class="brand-sub">
+RGB GAMING KEYBOARD
+</div>
+
+</div>
+
+
+<div class="arrow-grid">
+
+<button class="key arrow-up">
+↑
+</button>
+
+<button class="key arrow-left">
+←
+</button>
+
+<button class="key arrow-down">
+↓
+</button>
+
+<button class="key arrow-right">
+→
+</button>
+
+</div>
+
+
+</div>
+
+
+<!-- =====================
+NUMPAD
+===================== -->
+
+<div class="right-section">
+
+
+<div class="led-panel">
+
+<div class="led-wrap">
+
+<div class="led" id="capsLed"></div>
+
+CAPS
+
+</div>
+
+
+<div class="led-wrap">
+
+<div class="led on" id="numLed"></div>
+
+NUM
+
+</div>
+
+
+<div class="led-wrap">
+
+<div class="led" id="scrollLed"></div>
+
+SCR
+
+</div>
+
+</div>
+
+
+<div class="numpad">
+
+<button class="key">
+NUM
+</button>
+
+<button class="key">
+/
+</button>
+
+<button class="key">
+*
+</button>
+
+<button class="key">
+-
+</button>
+
+
+<button class="key">
+7
+</button>
+
+<button class="key">
+8
+</button>
+
+<button class="key">
+9
+</button>
+
+<button class="key plus">
++
+</button>
+
+
+<button class="key">
+4
+</button>
+
+<button class="key">
+5
+</button>
+
+<button class="key">
+6
+</button>
+
+
+<button class="key">
+1
+</button>
+
+<button class="key">
+2
+</button>
+
+<button class="key">
+3
+</button>
+
+
+<button class="key num-zero">
+0
+</button>
+
+<button class="key">
+.
+</button>
+
+<button class="key num-enter">
+ENTER
+</button>
+
+</div>
+
+
+</div>
+
+
+</div>
+
+<div class="underglow"></div>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* ================================
+   RGB COLORS
+================================ */
+
+const rgbColors=[
+
+"#ff004c",
+"#ff7300",
+"#ffe600",
+"#00ff88",
+"#00e5ff",
+"#477cff",
+"#8b5cff",
+"#d000ff"
+
+];
+
+const keys=document.querySelectorAll(".key");
+
+keys.forEach((key,index)=>{
+
+  key.style.setProperty(
+
+    "--rgb",
+
+    rgbColors[index%rgbColors.length]
+
+  );
+
+});
+
+
+/* ================================
+   RIPPLE EFFECT
+================================ */
+
+function ripple(key,event){
+
+  const rect=key.getBoundingClientRect();
+
+  const size=Math.max(
+
+    rect.width,
+    rect.height
+
+  );
+
+  const circle=document.createElement("span");
+
+  circle.className="ripple";
+
+  circle.style.width=size+"px";
+
+  circle.style.height=size+"px";
+
+  const x=
+
+    event.clientX
+    ?event.clientX-rect.left-size/2
+    :rect.width/2-size/2;
+
+  const y=
+
+    event.clientY
+    ?event.clientY-rect.top-size/2
+    :rect.height/2-size/2;
+
+  circle.style.left=x+"px";
+
+  circle.style.top=y+"px";
+
+  key.appendChild(circle);
+
+  setTimeout(()=>circle.remove(),500);
+
+}
+
+
+/* ================================
+   REALISTIC THOCK SOUND
+================================ */
+
+let audioContext=null;
+
+function makeThock(){
+
+  try{
+
+    if(!audioContext){
+
+      audioContext=new(
+
+        window.AudioContext ||
+        window.webkitAudioContext
+
+      )();
+
+    }
+
+    if(audioContext.state==="suspended"){
+
+      audioContext.resume();
+
+    }
+
+    const now=audioContext.currentTime;
+
+
+    /* LOW THOCK BODY */
+
+    const oscillator=
+
+      audioContext.createOscillator();
+
+    const gain=
+
+      audioContext.createGain();
+
+
+    oscillator.type="sine";
+
+
+    oscillator.frequency.setValueAtTime(
+
+      115,
+      now
+
+    );
+
+
+    oscillator.frequency.exponentialRampToValueAtTime(
+
+      55,
+
+      now+.075
+
+    );
+
+
+    gain.gain.setValueAtTime(
+
+      .13,
+
+      now
+
+    );
+
+
+    gain.gain.exponentialRampToValueAtTime(
+
+      .001,
+
+      now+.09
+
+    );
+
+
+    oscillator.connect(gain);
+
+    gain.connect(
+
+      audioContext.destination
+
+    );
+
+
+    oscillator.start(now);
+
+    oscillator.stop(now+.1);
+
+
+    /* MECHANICAL TAP */
+
+    const length=
+
+      Math.floor(
+
+        audioContext.sampleRate*.035
+
+      );
+
+
+    const buffer=
+
+      audioContext.createBuffer(
+
+        1,
+
+        length,
+
+        audioContext.sampleRate
+
+      );
+
+
+    const data=
+
+      buffer.getChannelData(0);
+
+
+    for(
+
+      let i=0;
+
+      i<length;
+
+      i++
+
+    ){
+
+      const fade=
+
+        1-i/length;
+
+      data[i]=
+
+        (Math.random()*2-1)
+
+        *fade*fade;
+
+    }
+
+
+    const noise=
+
+      audioContext.createBufferSource();
+
+    noise.buffer=buffer;
+
+
+    const filter=
+
+      audioContext.createBiquadFilter();
+
+    filter.type="lowpass";
+
+    filter.frequency.value=1500;
+
+
+    const noiseGain=
+
+      audioContext.createGain();
+
+    noiseGain.gain.setValueAtTime(
+
+      .055,
+
+      now
+
+    );
+
+
+    noiseGain.gain.exponentialRampToValueAtTime(
+
+      .001,
+
+      now+.04
+
+    );
+
+
+    noise.connect(filter);
+
+    filter.connect(noiseGain);
+
+    noiseGain.connect(
+
+      audioContext.destination
+
+    );
+
+
+    noise.start(now);
+
+    noise.stop(now+.045);
+
+
+  }
+
+  catch(error){
+
+    console.log(error);
+
+  }
+
+}
+
+
+/* ================================
+   KEY PRESS
+================================ */
+
+keys.forEach(key=>{
+
+
+  function press(event){
+
+    event.preventDefault();
+
+    key.classList.add("pressed");
+
+    ripple(key,event);
+
+    makeThock();
+
+  }
+
+
+  function release(){
+
+    key.classList.remove("pressed");
+
+  }
+
+
+  key.addEventListener(
+
+    "pointerdown",
+
+    press
+
+  );
+
+
+  key.addEventListener(
+
+    "pointerup",
+
+    release
+
+  );
+
+
+  key.addEventListener(
+
+    "pointercancel",
+
+    release
+
+  );
+
+
+  key.addEventListener(
+
+    "pointerleave",
+
+    release
+
+  );
+
+
+});
+
+
+/* ================================
+   CAPS LOCK LED
+================================ */
+
+let capsState=false;
+
+const capsKey=
+
+document.getElementById("capsKey");
+
+const capsLed=
+
+document.getElementById("capsLed");
+
+
+capsKey.addEventListener(
+
+  "click",
+
+  ()=>{
+
+    capsState=!capsState;
+
+    capsLed.classList.toggle(
+
+      "on",
+
+      capsState
+
+    );
+
+  }
+
+);
+
+
+/* ================================
+   PHYSICAL KEYBOARD SUPPORT
+================================ */
+
+document.addEventListener(
+
+  "keydown",
+
+  event=>{
+
+
+    keys.forEach(key=>{
+
+      if(
+
+        key.textContent.trim()
+        .toLowerCase()
+
+        ===
+
+        event.key.toLowerCase()
+
+      ){
+
+        key.classList.add(
+
+          "pressed"
+
+        );
+
+      }
+
+    });
+
+
+  }
+
+);
+
+
+document.addEventListener(
+
+  "keyup",
+
+  event=>{
+
+
+    keys.forEach(key=>{
+
+      key.classList.remove(
+
+        "pressed"
+
+      );
+
+    });
+
+
+  }
+
+);
+
+</script>
+
+</body>
+</html>
